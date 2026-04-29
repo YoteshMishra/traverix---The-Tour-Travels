@@ -1,6 +1,10 @@
 # 🌍 Traverix — The Tour & Travels
 
 ![Traverix Banner](./preview.png)
+<<<<<<< HEAD
+=======
+
+>>>>>>> 49498d3277d85a3a385326806aed6fc0fb23748f
 
 <div align="center">
 

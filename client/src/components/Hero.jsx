@@ -14,18 +14,18 @@ function Hero() {
           <input
             type="text"
             placeholder="Destination"
-            className="p-3 rounded text-black"
+            className="p-3 rounded text-white"
           />
 
           <input
             type="date"
-            className="p-3 rounded text-black"
+            className="p-3 rounded text-white"
           />
 
           <input
             type="number"
             placeholder="Guests"
-            className="p-3 rounded text-black"
+            className="p-3 rounded text-white"
           />
 
           <button className="bg-blue-600 p-3 rounded font-bold">
