@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Hero from "../components/Hero";
 import PackageCard from "../components/PackageCard";
-import API_BASE_URL from '../config/api'
+import API_BASE_URL from "../config/api";
 
 function Home() {
   const [packages, setPackages] = useState([]);
@@ -15,10 +15,14 @@ function Home() {
 
   const getPackages = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/packages`);
+      const response = await fetch(
+        `${API_BASE_URL}/api/packages`
+      );
 
       if (!response.ok) {
-        throw new Error("Failed to fetch packages");
+        throw new Error(
+          "Failed to fetch packages"
+        );
       }
 
       const data = await response.json();
@@ -46,9 +50,30 @@ function Home() {
     setFilteredPackages(result);
   }, [search, packages]);
 
+  const handleHeroSearch = ({
+    destination
+  }) => {
+    const result = packages.filter((item) =>
+      item.title
+        .toLowerCase()
+        .includes(
+          destination.toLowerCase()
+        )
+    );
+
+    setFilteredPackages(result);
+
+    window.scrollTo({
+      top: 700,
+      behavior: "smooth"
+    });
+  };
+
   return (
     <>
-      <Hero />
+      <Hero
+        onSearch={handleHeroSearch}
+      />
 
       <section className="bg-gray-100 py-14 px-6">
         <div className="max-w-7xl mx-auto">
@@ -62,7 +87,9 @@ function Home() {
               placeholder="Search destination..."
               value={search}
               onChange={(e) =>
-                setSearch(e.target.value)
+                setSearch(
+                  e.target.value
+                )
               }
               className="w-full md:w-96 border p-3 rounded-lg bg-white"
             />
@@ -82,7 +109,8 @@ function Home() {
 
           {!loading &&
             !error &&
-            filteredPackages.length === 0 && (
+            filteredPackages.length ===
+              0 && (
               <p className="text-center text-gray-600">
                 No packages found.
               </p>
@@ -90,14 +118,17 @@ function Home() {
 
           {!loading &&
             !error &&
-            filteredPackages.length > 0 && (
+            filteredPackages.length >
+              0 && (
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                {filteredPackages.map((item) => (
-                  <PackageCard
-                    key={item.id}
-                    item={item}
-                  />
-                ))}
+                {filteredPackages.map(
+                  (item) => (
+                    <PackageCard
+                      key={item.id}
+                      item={item}
+                    />
+                  )
+                )}
               </div>
             )}
         </div>
