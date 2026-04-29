@@ -1,6 +1,6 @@
 # 🌍 Traverix — The Tour & Travels
 
-![Traverix Banner](https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=1200&h=400&fit=crop)
+![Traverix Banner](./preview.png)
 
 <div align="center">
 
