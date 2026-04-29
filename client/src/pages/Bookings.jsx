@@ -1,6 +1,7 @@
 // Bookings.jsx
 
 import { useEffect, useState } from "react";
+import API_BASE_URL from '../config/api'
 
 function Bookings() {
   const [bookings, setBookings] = useState([]);
@@ -8,9 +9,7 @@ function Bookings() {
 
   const getBookings = async () => {
     try {
-      const response = await fetch(
-        "http://localhost:5000/api/bookings"
-      );
+      const response = await fetch(`${API_BASE_URL}/api/bookings`)
 
       const data = await response.json();
 
@@ -41,7 +40,7 @@ function Bookings() {
 
     try {
       await fetch(
-        `http://localhost:5000/api/bookings/${id}`,
+        `${API_BASE_URL}/api/bookings/${id}`,
         {
           method: "DELETE"
         }

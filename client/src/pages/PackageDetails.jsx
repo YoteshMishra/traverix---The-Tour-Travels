@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import API_BASE_URL from '../config/api'
 
 function PackageDetails() {
   const { id } = useParams();
@@ -14,9 +15,7 @@ function PackageDetails() {
 
   const getSinglePackage = async () => {
     try {
-      const response = await fetch(
-        "http://localhost:5000/api/packages"
-      );
+      const response = await fetch(`${API_BASE_URL}/api/packages`);
 
       const data = await response.json();
 
@@ -40,8 +39,7 @@ function PackageDetails() {
     try {
       setBookingLoading(true);
 
-      const response = await fetch(
-        "http://localhost:5000/api/bookings",
+      const response = await fetch(`${API_BASE_URL}/api/bookings`,
         {
           method: "POST",
           headers: {

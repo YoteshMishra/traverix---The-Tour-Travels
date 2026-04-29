@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Hero from "../components/Hero";
 import PackageCard from "../components/PackageCard";
+import API_BASE_URL from '../config/api'
 
 function Home() {
   const [packages, setPackages] = useState([]);
@@ -14,9 +15,7 @@ function Home() {
 
   const getPackages = async () => {
     try {
-      const response = await fetch(
-        "http://localhost:5000/api/packages"
-      );
+      const response = await fetch(`${API_BASE_URL}/api/packages`);
 
       if (!response.ok) {
         throw new Error("Failed to fetch packages");
