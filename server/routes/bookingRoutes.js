@@ -1,15 +1,25 @@
+// backend/routes/bookingRoutes.js
+
 const express = require("express");
 const router = express.Router();
-const Booking = require("../models/Booking");
 
-/* ---------------------------------
-   CREATE BOOKING
---------------------------------- */
-router.post("/", async (req, res) => {
+const Booking = require("../models/Booking");
+const authMiddleware = require("../middleware/authMiddleware");
+
+/* =====================================
+   CREATE BOOKING (Private)
+===================================== */
+router.post("/", authMiddleware, async (req, res) => {
   try {
-    const booking = await Booking.create(
-      req.body
-    );
+    const { title, image, days, price } = req.body;
+
+    const booking = await Booking.create({
+      title,
+      image,
+      days,
+      price,
+      userId: req.user.id
+    });
 
     res.status(201).json({
       success: true,
@@ -19,21 +29,20 @@ router.post("/", async (req, res) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: "Failed to create booking",
+      message: "Booking failed",
       error: error.message
     });
   }
 });
 
-/* ---------------------------------
-   GET ALL BOOKINGS
---------------------------------- */
-router.get("/", async (req, res) => {
+/* =====================================
+   GET MY BOOKINGS (Private)
+===================================== */
+router.get("/", authMiddleware, async (req, res) => {
   try {
-    const bookings =
-      await Booking.find().sort({
-        createdAt: -1
-      });
+    const bookings = await Booking.find({
+      userId: req.user.id
+    }).sort({ createdAt: -1 });
 
     res.status(200).json(bookings);
   } catch (error) {
@@ -45,15 +54,15 @@ router.get("/", async (req, res) => {
   }
 });
 
-/* ---------------------------------
-   GET SINGLE BOOKING
---------------------------------- */
-router.get("/:id", async (req, res) => {
+/* =====================================
+   GET SINGLE BOOKING (Private)
+===================================== */
+router.get("/:id", authMiddleware, async (req, res) => {
   try {
-    const booking =
-      await Booking.findById(
-        req.params.id
-      );
+    const booking = await Booking.findOne({
+      _id: req.params.id,
+      userId: req.user.id
+    });
 
     if (!booking) {
       return res.status(404).json({
@@ -72,15 +81,15 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-/* ---------------------------------
-   DELETE BOOKING
---------------------------------- */
-router.delete("/:id", async (req, res) => {
+/* =====================================
+   DELETE BOOKING (Private)
+===================================== */
+router.delete("/:id", authMiddleware, async (req, res) => {
   try {
-    const booking =
-      await Booking.findByIdAndDelete(
-        req.params.id
-      );
+    const booking = await Booking.findOneAndDelete({
+      _id: req.params.id,
+      userId: req.user.id
+    });
 
     if (!booking) {
       return res.status(404).json({
@@ -96,23 +105,25 @@ router.delete("/:id", async (req, res) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: "Failed to delete booking",
+      message: "Delete failed",
       error: error.message
     });
   }
 });
 
-/* ---------------------------------
-   UPDATE BOOKING (Optional)
---------------------------------- */
-router.put("/:id", async (req, res) => {
+/* =====================================
+   UPDATE BOOKING (Private)
+===================================== */
+router.put("/:id", authMiddleware, async (req, res) => {
   try {
-    const booking =
-      await Booking.findByIdAndUpdate(
-        req.params.id,
-        req.body,
-        { new: true }
-      );
+    const booking = await Booking.findOneAndUpdate(
+      {
+        _id: req.params.id,
+        userId: req.user.id
+      },
+      req.body,
+      { new: true }
+    );
 
     if (!booking) {
       return res.status(404).json({
@@ -129,7 +140,7 @@ router.put("/:id", async (req, res) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: "Failed to update booking",
+      message: "Update failed",
       error: error.message
     });
   }

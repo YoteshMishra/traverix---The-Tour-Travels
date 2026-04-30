@@ -1,8 +1,12 @@
 // src/pages/PackageDetails.jsx
 
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import API_BASE_URL from '../config/api'
+import {
+  useParams,
+  useNavigate
+} from "react-router-dom";
+import API_BASE_URL from "../config/api";
+import { toast } from "react-toastify";
 
 function PackageDetails() {
   const { id } = useParams();
@@ -15,7 +19,9 @@ function PackageDetails() {
 
   const getSinglePackage = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/packages`);
+      const response = await fetch(
+        `${API_BASE_URL}/api/packages`
+      );
 
       const data = await response.json();
 
@@ -37,14 +43,24 @@ function PackageDetails() {
 
   const handleBooking = async () => {
     try {
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        toast.error("Please Login First");
+        navigate("/login");
+        return;
+      }
+
       setBookingLoading(true);
 
-      const response = await fetch(`${API_BASE_URL}/api/bookings`,
+      const response = await fetch(
+        `${API_BASE_URL}/api/bookings`,
         {
           method: "POST",
           headers: {
             "Content-Type":
-              "application/json"
+              "application/json",
+            Authorization: `Bearer ${token}`
           },
           body: JSON.stringify(tour)
         }
@@ -53,10 +69,10 @@ function PackageDetails() {
       const data = await response.json();
 
       if (data.success) {
-        alert("Booking Successful");
+        toast.success("Booking Successful");
         navigate("/bookings");
       } else {
-        alert("Booking Failed");
+        toast.success("Booking Successful");
       }
 
       setBookingLoading(false);
@@ -92,11 +108,11 @@ function PackageDetails() {
         />
 
         <div className="p-8">
-          <h1 className="text-4xl font-bold text-gray-800">
+          <h1 className="text-4xl font-bold">
             {tour.title}
           </h1>
 
-          <p className="mt-4 text-gray-600 text-lg">
+          <p className="mt-4 text-lg text-gray-600">
             {tour.days}
           </p>
 
@@ -104,24 +120,10 @@ function PackageDetails() {
             ₹{tour.price}
           </p>
 
-          <p className="mt-6 text-gray-600 leading-7">
-            Enjoy an unforgettable travel
-            experience with premium stay,
-            sightseeing, meals and guided
-            support.
-          </p>
-
-          <ul className="mt-6 space-y-2 text-gray-700">
-            <li>✔ Hotel Included</li>
-            <li>✔ Breakfast Included</li>
-            <li>✔ Sightseeing Included</li>
-            <li>✔ Free Pickup & Drop</li>
-          </ul>
-
           <button
             onClick={handleBooking}
             disabled={bookingLoading}
-            className="mt-8 w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold"
+            className="mt-8 w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg"
           >
             {bookingLoading
               ? "Processing..."

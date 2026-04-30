@@ -1,15 +1,30 @@
-// Bookings.jsx
-
 import { useEffect, useState } from "react";
-import API_BASE_URL from '../config/api'
+import { toast } from "react-toastify";
+import API_BASE_URL from "../config/api";
 
 function Bookings() {
-  const [bookings, setBookings] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [bookings, setBookings] =
+    useState([]);
+
+  const [loading, setLoading] =
+    useState(true);
+
+  const [deleteLoading, setDeleteLoading] =
+    useState("");
 
   const getBookings = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/bookings`)
+      const token =
+        localStorage.getItem("token");
+
+      const response = await fetch(
+        `${API_BASE_URL}/api/bookings`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
 
       const data = await response.json();
 
@@ -18,6 +33,9 @@ function Bookings() {
     } catch (error) {
       console.log(error);
       setLoading(false);
+      toast.error(
+        "Failed to load bookings"
+      );
     }
   };
 
@@ -28,33 +46,61 @@ function Bookings() {
       getBookings();
     }, 3000);
 
-    return () => clearInterval(interval);
+    return () =>
+      clearInterval(interval);
   }, []);
 
   const deleteBooking = async (id) => {
-    const confirmDelete = window.confirm(
-      "Delete this booking?"
-    );
+    const confirmDelete =
+      window.confirm(
+        "Delete this booking?"
+      );
 
     if (!confirmDelete) return;
 
     try {
-      await fetch(
+      setDeleteLoading(id);
+
+      const token =
+        localStorage.getItem("token");
+
+      const response = await fetch(
         `${API_BASE_URL}/api/bookings/${id}`,
         {
-          method: "DELETE"
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
         }
       );
 
-      getBookings();
+      const data =
+        await response.json();
+
+      if (data.success) {
+        toast.success(
+          "Booking Deleted"
+        );
+        getBookings();
+      } else {
+        toast.error(
+          "Delete Failed"
+        );
+      }
+
+      setDeleteLoading("");
     } catch (error) {
       console.log(error);
+      setDeleteLoading("");
+      toast.error(
+        "Delete Failed"
+      );
     }
   };
 
   if (loading) {
     return (
-      <h1 className="text-center mt-10 text-xl">
+      <h1 className="text-center mt-10 text-xl font-semibold">
         Loading...
       </h1>
     );
@@ -64,13 +110,22 @@ function Bookings() {
     <section className="bg-gray-100 min-h-screen py-10 px-6">
       <div className="max-w-6xl mx-auto">
         <h1 className="text-4xl font-bold text-center mb-8">
-          Bookings ({bookings.length})
+          My Bookings (
+          {bookings.length})
         </h1>
 
         {bookings.length === 0 ? (
-          <p className="text-center text-lg">
-            No bookings found.
-          </p>
+          <div className="bg-white p-10 rounded-2xl shadow text-center">
+            <h2 className="text-2xl font-bold">
+              No bookings found ✈️
+            </h2>
+
+            <p className="mt-3 text-gray-600">
+              Book your first trip
+              now and start your
+              journey.
+            </p>
+          </div>
         ) : (
           <div className="grid md:grid-cols-2 gap-6">
             {bookings.map((item) => (
@@ -81,7 +136,7 @@ function Bookings() {
                 <img
                   src={item.image}
                   alt={item.title}
-                  className="h-52 w-full object-cover rounded"
+                  className="h-52 w-full object-cover rounded-lg"
                 />
 
                 <h2 className="text-2xl font-bold mt-4">
@@ -98,11 +153,20 @@ function Bookings() {
 
                 <button
                   onClick={() =>
-                    deleteBooking(item._id)
+                    deleteBooking(
+                      item._id
+                    )
                   }
-                  className="mt-4 w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded"
+                  disabled={
+                    deleteLoading ===
+                    item._id
+                  }
+                  className="mt-4 w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg"
                 >
-                  Delete Booking
+                  {deleteLoading ===
+                  item._id
+                    ? "Deleting..."
+                    : "Delete Booking"}
                 </button>
               </div>
             ))}
