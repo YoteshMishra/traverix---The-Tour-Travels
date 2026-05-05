@@ -1,28 +1,18 @@
-const jwt = require("jsonwebtoken");
+const mongoose = require("mongoose");
 
-module.exports = function (req, res, next) {
-  const authHeader = req.headers.authorization;
+const bookingSchema = new mongoose.Schema(
+  {
+    title: String,
+    price: Number,
+    days: String,
+    image: String,
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true
+    }
+  },
+  { timestamps: true }
+);
 
-  if (!authHeader) {
-    return res.status(401).json({
-      message: "No token"
-    });
-  }
-
-  const token = authHeader.split(" ")[1];
-
-  try {
-    const decoded = jwt.verify(
-      token,
-      process.env.JWT_SECRET
-    );
-
-    req.user = decoded;
-
-    next();
-  } catch (error) {
-    res.status(401).json({
-      message: "Invalid token"
-    });
-  }
-};
+module.exports = mongoose.model("Booking", bookingSchema);

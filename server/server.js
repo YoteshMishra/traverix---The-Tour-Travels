@@ -1,40 +1,42 @@
 const express = require("express");
-const mongoose = require("mongoose");
 const cors = require("cors");
-require("dotenv").config();
+const dotenv = require("dotenv");
+const connectDB = require("./config/db");
+const packages = require("./data/packages");
 
-const bookingRoutes =
-  require("./routes/bookingRoutes");
-
-const authRoutes =
-  require("./routes/authRoutes");
+dotenv.config();
+connectDB();
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
-app.use(
-  "/api/bookings",
-  bookingRoutes
-);
+// Root route
+app.get("/", (req, res) => {
+  res.json({ message: "Traverix API is running! 🚀" });
+});
 
+// Seed route
+app.get("/api/seed", async (req, res) => {
+  try {
+    const Package = require("./models/Package");
+    await Package.deleteMany();
+    await Package.insertMany(packages);
+    res.json({ 
+      message: "✅ Database seeded successfully!",
+      count: packages.length
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
 
-app.use("/api/auth", authRoutes);
+// All Routes
+app.use("/api/auth", require("./routes/authRoutes"));
+app.use("/api/packages", require("./routes/packageRoutes"));
+app.use("/api/bookings", require("./routes/bookingRoutes"));
 
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() =>
-    console.log(
-      "MongoDB Connected"
-    )
-  );
-
-const PORT =
-  process.env.PORT || 5000;
-
-app.listen(PORT, () => {
-  console.log(
-    "Server Running"
-  );
+app.listen(process.env.PORT || 5000, () => {
+  console.log("Server Running");
 });
