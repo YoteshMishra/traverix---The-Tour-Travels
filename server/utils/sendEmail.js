@@ -3,8 +3,6 @@ const nodemailer = require("nodemailer");
 const sendEmail = async (to, otp) => {
   try {
     console.log("Creating transporter...");
-    console.log("EMAIL:", process.env.EMAIL);
-    console.log("EMAIL_PASSWORD exists:", !!process.env.EMAIL_PASSWORD);
 
     const transporter = nodemailer.createTransport({
       service: "gmail",
@@ -14,11 +12,9 @@ const sendEmail = async (to, otp) => {
       }
     });
 
-    console.log("Verifying transporter...");
-    await transporter.verify();
-    console.log("Transporter verified!");
+    console.log("Sending email to:", to);
 
-    const mailOptions = {
+    await transporter.sendMail({
       from: `"Traverix" <${process.env.EMAIL}>`,
       to,
       subject: "Traverix - Password Reset OTP",
@@ -36,10 +32,9 @@ const sendEmail = async (to, otp) => {
           <p style="color: #999; font-size: 12px;">© 2026 Traverix. All Rights Reserved.</p>
         </div>
       `
-    };
+    });
 
-    await transporter.sendMail(mailOptions);
-    console.log("Email sent to:", to);
+    console.log("Email sent successfully!");
 
   } catch (error) {
     console.log("SEND EMAIL ERROR:", error.message);
