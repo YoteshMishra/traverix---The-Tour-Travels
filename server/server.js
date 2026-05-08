@@ -17,6 +17,17 @@ app.get("/", (req, res) => {
   res.json({ message: "Traverix API is running! 🚀" });
 });
 
+// Test email route — check env variables
+app.get("/api/test-email", (req, res) => {
+  res.json({
+    email: process.env.EMAIL,
+    passwordExists: !!process.env.EMAIL_PASSWORD,
+    passwordLength: process.env.EMAIL_PASSWORD?.length,
+    jwtExists: !!process.env.JWT_SECRET,
+    mongoExists: !!process.env.MONGO_URI
+  });
+});
+
 // Seed route
 app.get("/api/seed", async (req, res) => {
   try {
