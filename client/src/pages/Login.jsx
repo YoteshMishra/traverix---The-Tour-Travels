@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { toast } from "react-toastify";
 
 import API_BASE_URL from "../config/api";
@@ -115,6 +115,9 @@ function Login() {
             ? "Logging in..."
             : "Login"}
         </button>
+        <Link to="/forgot-password" className="text-blue-600 text-sm">
+  Forgot Password?
+</Link>
       </form>
     </div>
   );

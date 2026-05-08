@@ -7,10 +7,11 @@ const userSchema = new mongoose.Schema(
       type: String,
       unique: true
     },
-    password: String
+    password: String,
+    otp: String,
+    otpExpiry: Date
   },
   { timestamps: true }
 );
 
-module.exports =
-  mongoose.model("User", userSchema);
+module.exports = mongoose.model("User", userSchema);

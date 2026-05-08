@@ -9,6 +9,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Bookings from "./pages/Bookings";
 import PackageDetails from "./pages/PackageDetails";
+import ForgotPassword from "./pages/ForgotPassword";
 
 function App() {
   return (
@@ -18,20 +19,11 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
 
-        <Route
-          path="/package/:id"
-          element={<PackageDetails />}
-        />
+        <Route path="/package/:id" element={<PackageDetails />} />
 
-        <Route
-          path="/login"
-          element={<Login />}
-        />
+        <Route path="/login" element={<Login />} />
 
-        <Route
-          path="/signup"
-          element={<Signup />}
-        />
+        <Route path="/signup" element={<Signup />} />
 
         <Route
           path="/bookings"
@@ -41,7 +33,10 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
       </Routes>
+
+      
 
       <Footer />
     </>
